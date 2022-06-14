@@ -6,7 +6,7 @@ import Header from "./components/Header/Header"
 import Instructions from "./components/Instructions/Instructions"
 import Chip from "./components/Chip/Chip"
 import { useState } from "react"
-import NutritionalLabel from "./components/NutritionalLabel/NutritionalLabel"
+import NutritionalLabel, { NutritionalLabelFact } from "./components/NutritionalLabel/NutritionalLabel"
 
 // don't move this!
 export const appInfo = {
@@ -33,6 +33,21 @@ export function App() {
   const currentMenuItems = data.filter((item) => {
     return item.food_category === currCategory && item.restaurant === currRestaurant;
   })
+  const [selectedMenuItem, setMenuItem] = useState(null)
+
+  const setInstructions = () => {
+    if ((currCategory === null) && (currRestaurant === null)) {
+      return appInfo.instructions.start
+    } else if (currCategory === null) {
+      return appInfo.instructions.onlyRestaurant
+    } else if (currRestaurant === null) {
+      return appInfo.instructions.onlyCategory
+    } else if (selectedMenuItem === null) {
+      return appInfo.instructions.noSelectedItem
+    } else {
+      return appInfo.instructions.allSelected
+    }
+  }
 
   return (
     <main className="App">
@@ -44,8 +59,13 @@ export function App() {
             <Chip key={index} label={category} 
             isActive={currCategory===category} 
             onClick={() => {
-                setCategory(category)
-            }}></Chip>
+              setCategory(category)
+            }}
+            onClose={(e) => {
+              e.stopPropagation()
+              setCategory(null)
+            }}
+            />
           ))}
         </div>
       </div>
@@ -67,14 +87,22 @@ export function App() {
             isActive={currRestaurant===restaurant}
             onClick={() => {
               setRestaurant(restaurant)
-            }}></Chip>
+            }}
+            onClose={(e) => {
+              e.stopPropagation()
+              setRestaurant(null)
+            }}
+            />
           ))}
           </div>
         </div>
 
         {/* INSTRUCTIONS GO HERE */}
+
+        
+
         <Instructions 
-        instructions = {appInfo.instructions.start}
+        instructions = {setInstructions()}
         />
 
         {/* MENU DISPLAY */}
@@ -83,21 +111,29 @@ export function App() {
             <h2 className="title">Menu Items</h2>
             {/* YOUR CODE HERE */}
             {currentMenuItems.map((item, index) => (
-              <Chip key={index} label={item.item_name} onClick={() => {
-                
-              }}>
-                
-              </Chip>
+              
+              <Chip key={index} label={item.item_name} 
+              isActive={selectedMenuItem===item}
+              onClick={() => {
+                setMenuItem(item)
+              }}
+              onClose={(e) => {
+                e.stopPropagation()
+                setMenuItem(null)
+              }}
+              />
             ))}
           </div>
 
           {/* NUTRITION FACTS */}
           <div className="NutritionFacts nutrition-facts">
             {/* YOUR CODE HERE */}
-            <NutritionalLabel 
-            item-name={currentMenuItems.item_name}
-            fact-list="test"
-            />
+            
+              <NutritionalLabel 
+              item={selectedMenuItem}
+              factList={selectedMenuItem}
+              />
+
             </div>
         </div>
 

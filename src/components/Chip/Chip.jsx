@@ -2,10 +2,12 @@ import * as React from "react"
 import "./Chip.css"
 
 export function Chip({ label = "", isActive = false, onClick = () => {}, onClose = () => {} }) {
-  let buttonClassName = "chip";
+  let buttonClassName;
 
   if (isActive === true) {
-    buttonClassName += " active";
+    buttonClassName = "chip active";
+  } else {
+    buttonClassName = "chip";
   }
   
   return (
