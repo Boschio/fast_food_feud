@@ -4,9 +4,11 @@ import { createDataSet } from "./data/dataset"
 import "./App.css"
 import Header from "./components/Header/Header"
 import Instructions from "./components/Instructions/Instructions"
-import Chip from "./components/Chip/Chip"
 import { useState } from "react"
-import NutritionalLabel, { NutritionalLabelFact } from "./components/NutritionalLabel/NutritionalLabel"
+import { RestaurantsRow } from "./components/RestaurantsRow"
+import { CategoriesColumn } from "./components/CategoriesColumn"
+import { MenuDisplay } from "./components/MenuDisplay"
+import { DataSource } from "./components/DataSource"
 
 // don't move this!
 export const appInfo = {
@@ -26,14 +28,13 @@ export const appInfo = {
 const { data, categories, restaurants } = createDataSet()
 
 export function App() {
-  // useState stuff
-  const [currCategory, setCategory] = useState(null)
-  const [currRestaurant, setRestaurant] = useState(null)
+  const [currCategory, setCurrCategory] = useState(null)
+  const [currRestaurant, setCurrRestaurant] = useState(null)
+  const [selectedMenuItem, setSelectedMenuItem] = useState(null)
 
   const currentMenuItems = data.filter((item) => {
     return item.food_category === currCategory && item.restaurant === currRestaurant;
   })
-  const [selectedMenuItem, setMenuItem] = useState(null)
 
   const setInstructions = () => {
     if ((currCategory === null) && (currRestaurant === null)) {
@@ -52,94 +53,24 @@ export function App() {
   return (
     <main className="App">
       {/* CATEGORIES COLUMN */}
-      <div className="CategoriesColumn col">
-        <div className="categories options">
-          <h2 className="title">Categories</h2>
-          {categories.map((category, index) => (
-            <Chip key={index} label={category} 
-            isActive={currCategory===category} 
-            onClick={() => {
-              setCategory(category)
-            }}
-            onClose={(e) => {
-              e.stopPropagation()
-              setCategory(null)
-            }}
-            />
-          ))}
-        </div>
-      </div>
+      <CategoriesColumn categories={categories} setCurrCategory={setCurrCategory} currCategory={currCategory}/>
 
       {/* MAIN COLUMN */}
       <div className="container">
         {/* HEADER GOES HERE */}
-        <Header 
-        title={appInfo.title}
-        tagline={appInfo.tagline}
-        description={appInfo.description}
-        />
+        <Header title={appInfo.title} tagline={appInfo.tagline} description={appInfo.description}/>
 
         {/* RESTAURANTS ROW */}
-        <div className="RestaurantsRow">
-          <h2 className="title">Restaurants</h2>
-          <div className="restaurants options">{restaurants.map((restaurant, index) => (
-            <Chip key={index} label={restaurant} 
-            isActive={currRestaurant===restaurant}
-            onClick={() => {
-              setRestaurant(restaurant)
-            }}
-            onClose={(e) => {
-              e.stopPropagation()
-              setRestaurant(null)
-            }}
-            />
-          ))}
-          </div>
-        </div>
+        <RestaurantsRow restaurant={restaurants} setCurrRestaurant={setCurrRestaurant} currRestaurant={currRestaurant}/>
 
         {/* INSTRUCTIONS GO HERE */}
-
-        
-
-        <Instructions 
-        instructions = {setInstructions()}
-        />
+        <Instructions instructions = {setInstructions()}/>
 
         {/* MENU DISPLAY */}
-        <div className="MenuDisplay display">
-          <div className="MenuItemButtons menu-items">
-            <h2 className="title">Menu Items</h2>
-            {/* YOUR CODE HERE */}
-            {currentMenuItems.map((item, index) => (
-              
-              <Chip key={index} label={item.item_name} 
-              isActive={selectedMenuItem===item}
-              onClick={() => {
-                setMenuItem(item)
-              }}
-              onClose={(e) => {
-                e.stopPropagation()
-                setMenuItem(null)
-              }}
-              />
-            ))}
-          </div>
+        <MenuDisplay currentMenuItems={currentMenuItems} setSelectedMenuItem={setSelectedMenuItem} selectedMenuItem={selectedMenuItem}/>
 
-          {/* NUTRITION FACTS */}
-          <div className="NutritionFacts nutrition-facts">
-            {/* YOUR CODE HERE */}
-            
-              <NutritionalLabel 
-              item={selectedMenuItem}
-              factList={selectedMenuItem}
-              />
+        <DataSource dataSource={appInfo.dataSource}/>
 
-            </div>
-        </div>
-
-        <div className="data-sources">
-          <p>{appInfo.dataSource}</p>
-        </div>
       </div>
     </main>
   )

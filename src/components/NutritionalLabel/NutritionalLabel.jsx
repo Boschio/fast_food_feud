@@ -3,7 +3,7 @@ import { nutritionFacts } from "../../constants"
 import "./NutritionalLabel.css"
 
 export function NutritionalLabel(props) {
-  console.log("name: ", props)
+  // console.log("name: ", props)
   if (props.item===null) {
     return null
   } 
@@ -17,6 +17,7 @@ export function NutritionalLabel(props) {
         nutritionFacts.map((fact) => (
         <NutritionalLabelFact
         label={fact.label}
+        // let attributes = {(fact.attribute==="fiber" ? "dietary_fiber" : fact.attribute)}
         value={props.item[fact.attribute]}
         />
         ))}</ul>
